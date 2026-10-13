@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BDA Lab Programs</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1c1f24;--muted:#6b7280;--code-bg:#0f172a;--code-text:#e2e8f0;--accent:#2563eb;--border:#e5e7eb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f17;--card:#141a24;--text:#e5e7eb;--muted:#9ca3af;--code-bg:#05080e;--code-text:#e2e8f0;--accent:#60a5fa;--border:#232b3a}}
+:root[data-theme="dark"]{--bg:#0b0f17;--card:#141a24;--text:#e5e7eb;--muted:#9ca3af;--code-bg:#05080e;--code-text:#e2e8f0;--accent:#60a5fa;--border:#232b3a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+header{max-width:900px;margin:0 auto;padding:28px 16px 8px}
+h1{margin:0 0 4px;font-size:1.6rem}
+header p{margin:0;color:var(--muted)}
+nav{max-width:900px;margin:0 auto;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px}
+nav a{font-size:.8rem;padding:3px 10px;border:1px solid var(--border);border-radius:999px;color:var(--accent);text-decoration:none;background:var(--card)}
+main{max-width:900px;margin:0 auto;padding:8px 16px 40px}
+section{background:var(--card);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
+h2{margin:0;font-size:1.05rem}
+button{font:inherit;font-size:.8rem;padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer}
+pre{margin:0;padding:14px;background:var(--code-bg);color:var(--code-text);overflow-x:auto;font-size:.85rem;line-height:1.55;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;tab-size:4}
+</style>
+</head>
+<body>
+<header>
+<h1>BDA Lab Programs</h1>
+<p>Cleaned and re-indented. Tap Copy on any program.</p>
+</header>
+<nav>
+<a href="#p1a">1a</a><a href="#p1b">1b</a><a href="#p2">2</a><a href="#p3">3</a><a href="#p4">4</a><a href="#p5">5</a><a href="#p6">6</a><a href="#p7">7</a><a href="#p8">8</a><a href="#p9">9</a><a href="#p10">10</a>
+</nav>
+<main>
+
+<section id="p1a"><div class="bar"><h2>Program 1a</h2><button>Copy</button></div>
+<pre><code>import pandas as pd
+
+data = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv")
+
+print(data.head(), data.shape, data.columns, data.dtypes)
+data.info()
+print(data.describe(), data.isnull().sum(), data.sample(5))
+</code></pre></section>
+
+<section id="p1b"><div class="bar"><h2>Program 1b</h2><button>Copy</button></div>
+<pre><code>import pandas as pd
+
+d = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv")
+d = d.fillna(0).drop_duplicates()
+d.columns = ['SepalLength', 'SepalWidth', 'PetalLen', 'PetalWidth', 'Species']
+print(d.head())
+</code></pre></section>
+
+<section id="p2"><div class="bar"><h2>Program 2</h2><button>Copy</button></div>
+<pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("weather_data.csv")
+print(df.shape, df.isnull().sum())
+
+df = df.dropna()
+df["weather_condition"] = df["weather"].str.strip()
+
+print(df["Temp_C"].mean())
+print(df["Wind Speed_kmh"].mean())
+print(df["Press_kPa"].max())
+
+wind = df[df["Wind Speed_kmh"] &lt;= 30]
+print(wind.shape)
+
+snow = df[df["weather_condition"] == "snow"]
+print(snow[["Date/Time", "Temp_C"]])
+
+df.plot(x="Date/Time", y="Temp_C")
+plt.show()
+
+w = df["weather_condition"].value_counts()
+w = w[w &gt; 20]
+w.plot.pie(autopct="%1.1f%%", legend=False)
+plt.title("Weather Condition")
+plt.show()
+</code></pre></section>
+
+<section id="p3"><div class="bar"><h2>Program 3</h2><button>Copy</button></div>
+<pre><code>import os
+import shutil
+
+try:
+    hdfs_root = "HDFS"
+    os.makedirs(hdfs_root, exist_ok=True)
+    print("Root HDFS directory created")
+
+    input_dir = os.path.join(hdfs_root, "input")
+    output_dir = os.path.join(hdfs_root, "output")
+    backup_dir = os.path.join(hdfs_root, "backup")
+
+    os.makedirs(input_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(backup_dir, exist_ok=True)
+    print("Subdirectories created")
+
+    file_path = os.path.join(input_dir, "data.txt")
+    with open(file_path, "w") as file:
+        file.write("Welcome to HDFS")
+    print("File created")
+
+    copied_file = os.path.join(backup_dir, "data.txt")
+    shutil.copy(file_path, copied_file)
+    print("File copied")
+
+    moved_file = os.path.join(output_dir, "data.txt")
+    shutil.move(file_path, moved_file)
+    print("File moved")
+
+    renamed_file = os.path.join(output_dir, "data_final.txt")
+    os.rename(moved_file, renamed_file)
+    print("File renamed")
+
+    print("\nHDFS directory structure")
+    for root, dirs, files in os.walk(hdfs_root):
+        print(f"\n{root}")
+        for d in dirs:
+            print("DIR:", d)
+        for f in files:
+            print("FILE:", f)
+
+    os.remove(copied_file)
+    print("Copied file deleted")
+
+    os.rmdir(backup_dir)
+    print("Empty backup directory deleted")
+
+    shutil.rmtree(output_dir)
+    print("Non-empty output directory deleted")
+
+except FileNotFoundError:
+    print("Error: File or directory not found")
+except PermissionError:
+    print("Error: Permission denied")
+except Exception as e:
+    print("An error occurred:", e)
+</code></pre></section>
+
+<section id="p4"><div class="bar"><h2>Program 4</h2><button>Copy</button></div>
+<pre><code>import pandas as pd
+
+d = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv")
+print(d.head())
+d.info()
+print(d.describe(), d.isnull().sum())
+
+d = d.drop_duplicates()
+d.columns = ["SepalLength", "SepalWidth", "PetalLen", "PetalWidth", "Species"]
+
+print(d[d.Species == "setosa"].head())
+print(d.sort_values("SepalLength").head())
+print(d.groupby("Species").size())
+print(d.groupby("Species")["SepalLength"].mean())
+
+d.to_csv("processed_iris.csv", index=False)
+print("Processed data saved successfully")
+</code></pre></section>
+
+<section id="p5"><div class="bar"><h2>Program 5</h2><button>Copy</button></div>
+<pre><code>import json
+
+file_name = "students.json"
+
+
+def load_data():
+    try:
+        with open(file_name, "r") as file:
+            return json.load(file)
+    except:
+        return []
+
+
+def save_data(data):
+    with open(file_name, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+def create_record():
+    data = load_data()
+    sid = input("Enter student ID: ")
+    name = input("Enter student name: ")
+    age = int(input("Enter age: "))
+    course = input("Enter course: ")
+
+    student = {
+        "ID": sid,
+        "Name": name,
+        "Age": age,
+        "Course": course
+    }
+
+    data.append(student)
+    save_data(data)
+    print("Record added successfully")
+
+
+def read_records():
+    data = load_data()
+    if len(data) == 0:
+        print("No records found")
+    else:
+        for student in data:
+            print(student)
+
+
+def update_record():
+    data = load_data()
+    sid = input("Enter student ID to update: ")
+    for student in data:
+        if student["ID"] == sid:
+            student["Name"] = input("Enter New Name: ")
+            student["Age"] = int(input("Enter New Age: "))
+            student["Course"] = input("Enter New Course: ")
+            save_data(data)
+            print("Record updated successfully")
+            return
+    print("Record not found")
+
+
+def delete_record():
+    data = load_data()
+    sid = input("Enter student ID to delete: ")
+    for student in data:
+        if student["ID"] == sid:
+            data.remove(student)
+            save_data(data)
+            print("Record deleted")
+            return
+    print("Record not found")
+
+
+while True:
+    print("\n--- JSON CRUD OPERATIONS ---")
+    print("1. Create record")
+    print("2. Read records")
+    print("3. Update record")
+    print("4. Delete record")
+    print("5. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        create_record()
+    elif choice == "2":
+        read_records()
+    elif choice == "3":
+        update_record()
+    elif choice == "4":
+        delete_record()
+    elif choice == "5":
+        print("Exiting program")
+        break
+    else:
+        print("Invalid choice")
+</code></pre></section>
+
+<section id="p6"><div class="bar"><h2>Program 6</h2><button>Copy</button></div>
+<pre><code>import json
+
+s = [
+    {"id": 101, "name": "Shreyas", "age": 22, "course": "CSE"},
+    {"id": 102, "name": "Nishanth", "age": 21, "course": "ISE"},
+    {"id": 103, "name": "Chinmay", "age": 23, "course": "CSE"},
+    {"id": 104, "name": "Pooja", "age": 20, "course": "ECE"},
+    {"id": 105, "name": "Aarjun", "age": 22, "course": "ISE"}
+]
+
+with open("student.json", "w") as f:
+    json.dump(s, f)
+
+with open("student.json") as f:
+    d = json.load(f)
+
+print("Complete student records")
+for x in d:
+    print(x)
+
+n = input("Enter student name to search: ")
+for x in d:
+    if x["name"].lower() == n.lower():
+        print(x)
+
+c = input("Enter course to filter: ")
+print("Students in", c, "department")
+for x in d:
+    if x["course"].lower() == c.lower():
+        print(x)
+
+a = int(input("Enter minimum age: "))
+for x in d:
+    if x["age"] &gt;= a:
+        print(x)
+</code></pre></section>
+
+<section id="p7"><div class="bar"><h2>Program 7</h2><button>Copy</button></div>
+<pre><code>text = "Big data is powerful. Big data uses MapReduce. MapReduce processes big data efficiently."
+
+words = text.lower().replace(".", "").split()
+mapped = [(w, 1) for w in words]
+print("Map Phase Output:")
+print(mapped)
+
+counts = {}
+for w, n in mapped:
+    counts[w] = counts.get(w, 0) + n
+
+print("\nReduce Phase Output (Word Counts):")
+for w, n in counts.items():
+    print(w, ":", n)
+</code></pre></section>
+
+<section id="p8"><div class="bar"><h2>Program 8</h2><button>Copy</button></div>
+<pre><code>import pandas as pd
+
+
+def hive():
+    d = pd.DataFrame({
+        "user_id": [101, 102, 103, 105, 106, 107],
+        "action": ["login", "login", "login", "purchase", "logout", "login"],
+        "timestamp": ["10:00", "10:13", "10:20", "10:30", "10:45", "11:00"]
+    })
+    print("\nHIVE Analysis\n", d)
+    print("\nSelect action, count(*)\n", d.groupby("action").size())
+    print("\nGroup by action\n", d.groupby("action").size().to_string(index=False))
+
+
+def pig():
+    d = pd.DataFrame({
+        "id": [1, 2, 3, 4, 5, 6],
+        "type": ["warning", "error", "info", "error", "warning", "error"],
+        "message": ["CPU high", "Database failure", "File opened",
+                    "Disk usage high", "High CPU usage", "Connection failed"]
+    })
+    print("\nPig Analysis\n\nLog Data:\n", d)
+    e = d[d["type"] == "error"]
+    print("\nFiltered Logs:\n", e)
+    print("\nGrouped Logs:\n", e.groupby("type").size().to_string(index=False))
+
+
+print("=" * 50, "\nHIVE AND PIG ANALYTICS")
+hive()
+pig()
+print("=" * 50, "\nProgram Executed Successfully")
+</code></pre></section>
+
+<section id="p9"><div class="bar"><h2>Program 9</h2><button>Copy</button></div>
+<pre><code>from pyspark.sql import SparkSession
+from pyspark.sql.functions import avg, max, min, count
+
+s = SparkSession.builder.appName("StudentDataAnalysis").getOrCreate()
+d = [
+    (101, "Rahul", "CSE", 85), (102, "Pooja", "ISE", 90),
+    (103, "Arun", "CSE", 78), (104, "Sneha", "ECE", 88),
+    (105, "Kiran", "ISE", 92), (106, "Anu", "ECE", 75)
+]
+df = s.createDataFrame(d, ["ID", "Name", "Department", "Marks"])
+
+print("Student Data:")
+df.show()
+print("Students with marks &gt; 80")
+df.filter(df.Marks &gt; 80).show()
+print("Average marks by department")
+df.groupBy("Department").agg(avg("Marks").alias("Average Marks")).show()
+print("Maximum Marks")
+df.agg(max("Marks").alias("Maximum Marks")).show()
+print("Minimum Marks")
+df.agg(min("Marks").alias("Minimum Marks")).show()
+print("Number of students in each department")
+df.groupBy("Department").agg(count("*").alias("Student Count")).show()
+s.stop()
+</code></pre></section>
+
+<section id="p10"><div class="bar"><h2>Program 10</h2><button>Copy</button></div>
+<pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+d = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv")
+X, y = d[["petal_length"]], d["sepal_length"]
+
+m = LinearRegression().fit(X, y)
+p = m.predict(X)
+
+print("Predicted values:")
+print(p[:5])
+
+plt.scatter(X, y)
+plt.plot(X, p, color="red")
+plt.show()
+</code></pre></section>
+
+</main>
+<script>
+document.querySelectorAll("section").forEach(function(sec){
+  var btn = sec.querySelector("button");
+  btn.addEventListener("click", function(){
+    var text = sec.querySelector("code").innerText;
+    function done(){ btn.textContent = "Copied"; setTimeout(function(){ btn.textContent = "Copy"; }, 1200); }
+    try {
+      navigator.clipboard.writeText(text).then(done, function(){ btn.textContent = "Press Ctrl+C"; });
+    } catch (e) { btn.textContent = "Press Ctrl+C"; }
+  });
+});
+</script>
+</body>
+</html>
